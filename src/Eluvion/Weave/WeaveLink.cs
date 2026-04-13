@@ -1,7 +1,8 @@
 namespace Eluvion.Weave;
 
+/// <summary>Two weaves whose transformations are composed in sequence.</summary>
 public sealed class WeaveLink<TIn,TInAndOut,TOut>(
-    IWeave<TIn,TInAndOut> first, 
+    IWeave<TIn,TInAndOut> first,
     IWeave<TInAndOut,TOut> second
 ) : IWeave<TIn, TOut>
 {

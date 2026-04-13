@@ -2,8 +2,9 @@ using Eluvion.Weave;
 
 namespace Eluvion.Effect;
 
+/// <summary>Two effects that act on the same input in sequence.</summary>
 public sealed class EffectLink<TIn>(
-    IEffect<TIn> first, 
+    IEffect<TIn> first,
     IEffect<TIn> second
 ) : IEffect<TIn>
 {

@@ -2,13 +2,16 @@ using Eluvion.Weave;
 
 namespace Eluvion.Effect;
 
+/// <summary>An effect delegating to the given effect.</summary>
 public abstract class EffectEnvelope<TIn>(IEffect<TIn> origin) : IEffect<TIn>
 {
+    /// <summary>An effect delegating to the given async function.</summary>
     public EffectEnvelope(Func<TIn, Task> act) : this(
         new AsEffect<TIn>(async ipt => await act(ipt))
     )
     { }
-    
+
+    /// <summary>An effect delegating to the given synchronous action.</summary>
     public EffectEnvelope(Action<TIn> act) : this(
         new AsEffect<TIn>(ipt =>
         {

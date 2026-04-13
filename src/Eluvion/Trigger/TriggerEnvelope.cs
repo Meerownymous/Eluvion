@@ -1,10 +1,13 @@
 namespace Eluvion.Trigger;
 
+/// <summary>A trigger delegating to the given trigger.</summary>
 public abstract class TriggerEnvelope(ITrigger origin) : ITrigger
 {
+    /// <summary>A trigger delegating to the given synchronous action.</summary>
     public TriggerEnvelope(Action act) : this(new AsTrigger(act))
     { }
-    
+
+    /// <summary>A trigger delegating to the given async action.</summary>
     public TriggerEnvelope(Func<Task> act) : this(new AsTrigger(act))
     { }
 

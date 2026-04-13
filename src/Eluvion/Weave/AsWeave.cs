@@ -1,15 +1,14 @@
 namespace Eluvion.Weave;
 
+/// <summary>A weave built from the given async transformation function.</summary>
 public sealed class AsWeave<TIn,TOut>(Func<TIn,Task<TOut>> act) : IWeave<TIn,TOut>
 {
+    /// <summary>A weave built from the given synchronous transformation function.</summary>
     public AsWeave(Func<TIn,TOut> act) : this(ipt => Task.FromResult(act(ipt)))
     { }
-    
+
     public async Task<TOut> Act(TIn ipt) => await act(ipt);
 
-    /// <summary>
-    /// Will act on the given take and return result from this take.
-    /// </summary>
     public IWeave<TIn, TOut> Trigger(ITrigger trigger) => 
         new WeaveLink<TIn, TOut, TOut>(
             this, 

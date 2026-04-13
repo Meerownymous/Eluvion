@@ -4,13 +4,13 @@ using Eluvion.Trigger;
 
 namespace Slydrix.Tests.Seed;
 
-public sealed class ImplicitTriggerTests
+public sealed class TriggerMorphTests
 {
     [Fact]
     public async Task Act_DelegatesToWrappedTrigger()
     {
         var called = false;
-        await new ImplicitTrigger(new AsTrigger(() => called = true)).Act();
+        await new TriggerMorph(new AsTrigger(() => called = true)).Act();
         Assert.True(called);
     }
 
@@ -18,8 +18,8 @@ public sealed class ImplicitTriggerTests
     public async Task ImplicitFromAction_ExecutesOnAct()
     {
         var called = false;
-        ImplicitTrigger trigger = (Action)(() => called = true);
-        await trigger.Act();
+        TriggerMorph triggerMorph = (Action)(() => called = true);
+        await triggerMorph.Act();
         Assert.True(called);
     }
 
@@ -27,7 +27,7 @@ public sealed class ImplicitTriggerTests
     public async Task Trigger_ChainedTriggerExecutes()
     {
         var called = false;
-        await new ImplicitTrigger(new AsTrigger(() => { }))
+        await new TriggerMorph(new AsTrigger(() => { }))
             .Trigger(new AsTrigger(() => called = true))
             .Act();
         Assert.True(called);

@@ -3,9 +3,7 @@ using Tonga.Text;
 
 namespace Eluvion.Misc;
 
-/// <summary>
-/// Adapt multiple types as IText automatically.
-/// </summary>
+/// <summary>A text that accepts multiple source types through implicit conversion, making them interchangeable with IText.</summary>
 public sealed class TextMorph(IText text) : TextEnvelope(text)
 {
     public static implicit operator TextMorph(AsText str) => new(str);

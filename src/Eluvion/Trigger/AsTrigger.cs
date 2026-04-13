@@ -3,13 +3,15 @@ using Eluvion.Weave;
 
 namespace Eluvion.Trigger;
 
+/// <summary>A trigger built from the given async action.</summary>
 public sealed class AsTrigger(Func<Task> act) : ITrigger
 {
+    /// <summary>A trigger built from the given synchronous action.</summary>
     public AsTrigger(Action act) : this(() =>
     {
         act();
         return Task.CompletedTask;
-    }) 
+    })
     { }
     public async Task Act() => await act();
 

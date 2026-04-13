@@ -1,10 +1,13 @@
 namespace Eluvion.Weave;
 
+/// <summary>A weave delegating to the given weave.</summary>
 public abstract class WeaveEnvelope<TIn, TOut>(IWeave<TIn,TOut> origin) : IWeave<TIn, TOut>
 {
+    /// <summary>A weave delegating to the given async function.</summary>
     public WeaveEnvelope(Func<TIn, Task<TOut>> act) : this(new AsWeave<TIn, TOut>(act))
     { }
-    
+
+    /// <summary>A weave delegating to the given synchronous function.</summary>
     public WeaveEnvelope(Func<TIn, TOut> act) : this(new AsWeave<TIn, TOut>(act))
     { }
     
