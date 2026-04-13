@@ -1,0 +1,81 @@
+using Xunit;
+using Eluvion.Effect;
+using Eluvion.Trigger;
+using Eluvion.Weave;
+
+namespace Slydrix.Tests.Effect;
+
+public sealed class EffectLinkTests
+{
+    [Fact]
+    public async Task Act_FirstEffectExecutes()
+    {
+        var called = false;
+        await new EffectLink<int>(
+            new AsEffect<int>(_ => called = true),
+            new AsEffect<int>(_ => { })
+        ).Act(0);
+        Assert.True(called);
+    }
+
+    [Fact]
+    public async Task Act_SecondEffectExecutes()
+    {
+        var called = false;
+        await new EffectLink<int>(
+            new AsEffect<int>(_ => { }),
+            new AsEffect<int>(_ => called = true)
+        ).Act(0);
+        Assert.True(called);
+    }
+
+    [Fact]
+    public async Task Act_BothEffectsReceiveSameInput()
+    {
+        var sum = 0;
+        await new EffectLink<int>(
+            new AsEffect<int>(ipt => sum += ipt),
+            new AsEffect<int>(ipt => sum += ipt)
+        ).Act(21);
+        Assert.Equal(42, sum);
+    }
+
+    [Fact]
+    public async Task Act_FirstExecutesBeforeSecond()
+    {
+        var order = new List<int>();
+        await new EffectLink<int>(
+            new AsEffect<int>(_ => order.Add(1)),
+            new AsEffect<int>(_ => order.Add(2))
+        ).Act(0);
+        Assert.Equal(1, order[0]);
+    }
+
+    [Fact]
+    public async Task Trigger_ChainedTriggerExecutes()
+    {
+        var called = false;
+        await new EffectLink<int>(new AsEffect<int>(_ => { }), new AsEffect<int>(_ => { }))
+            .Trigger(new AsTrigger(() => called = true))
+            .Act(0);
+        Assert.True(called);
+    }
+
+    [Fact]
+    public async Task Effect_ChainedEffectExecutes()
+    {
+        var called = false;
+        await new EffectLink<int>(new AsEffect<int>(_ => { }), new AsEffect<int>(_ => { }))
+            .Effect(new AsEffect<int>(_ => called = true))
+            .Act(0);
+        Assert.True(called);
+    }
+
+    [Fact]
+    public async Task Weave_InputPassesThroughToWeave()
+        => Assert.Equal(42, await new EffectLink<int>(
+                new AsEffect<int>(_ => { }),
+                new AsEffect<int>(_ => { }))
+            .Weave(new AsWeave<int, int>(x => x))
+            .Act(42));
+}
