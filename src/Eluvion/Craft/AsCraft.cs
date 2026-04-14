@@ -1,18 +1,20 @@
-namespace Eluvion.Weave;
+using Eluvion.Weave;
+
+namespace Eluvion.Forge;
 
 /// <summary>A weave built from the given async transformation function.</summary>
-public sealed class AsWeave<TIn,TOut>(Func<TIn,Task<TOut>> act) : IWeave<TIn,TOut>
+public sealed class AsCraft<TIn,TOut>(Func<TIn,Task<TOut>> act) : IWeave<TIn,TOut>
 {
     /// <summary>A weave built from the given synchronous transformation function.</summary>
-    public AsWeave(Func<TIn,TOut> act) : this(ipt => Task.FromResult(act(ipt)))
+    public AsCraft(Func<TIn,TOut> act) : this(ipt => Task.FromResult(act(ipt)))
     { }
 
     public async Task<TOut> Act(TIn ipt) => await act(ipt);
 
     public IWeave<TIn, TOut> Trigger(ITrigger trigger) => 
-        new WeaveLink<TIn, TOut, TOut>(
+        new CraftLink<TIn, TOut, TOut>(
             this, 
-            new AsWeave<TOut, TOut>(async resultFromFirst =>
+            new AsCraft<TOut, TOut>(async resultFromFirst =>
             {
                 await trigger.Act();
                 return resultFromFirst;
@@ -20,9 +22,9 @@ public sealed class AsWeave<TIn,TOut>(Func<TIn,Task<TOut>> act) : IWeave<TIn,TOu
         );
 
     public IWeave<TIn, TOut> Effect(IEffect<TOut> effect) =>
-        new WeaveLink<TIn, TOut, TOut>(
+        new CraftLink<TIn, TOut, TOut>(
             this,
-            new AsWeave<TOut, TOut>(async resultFromFirst =>
+            new AsCraft<TOut, TOut>(async resultFromFirst =>
             {
                 await effect.Act(resultFromFirst);
                 return resultFromFirst;
@@ -31,5 +33,5 @@ public sealed class AsWeave<TIn,TOut>(Func<TIn,Task<TOut>> act) : IWeave<TIn,TOu
     
 
     public IWeave<TIn, TOutNext> Weave<TOutNext>(IWeave<TOut, TOutNext> weave) =>
-        new WeaveLink<TIn, TOut, TOutNext>(this, weave);
+        new CraftLink<TIn, TOut, TOutNext>(this, weave);
 }

@@ -1,4 +1,5 @@
 using Eluvion.Effect;
+using Eluvion.Forge;
 using Eluvion.Weave;
 
 namespace Eluvion.Trigger;
@@ -24,8 +25,8 @@ public sealed class AsTrigger(Func<Task> act) : ITrigger
         );
 
     public IWeave<TIn, TOut> Weave<TIn, TOut>(IWeave<TIn, TOut> weave) =>
-        new WeaveLink<TIn, TIn, TOut>(
-            new AsWeave<TIn, TIn>(async ipt =>
+        new CraftLink<TIn, TIn, TOut>(
+            new AsCraft<TIn, TIn>(async ipt =>
             {
                 await Act();
                 return ipt;

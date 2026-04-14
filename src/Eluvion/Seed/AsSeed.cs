@@ -1,3 +1,4 @@
+using Eluvion.Forge;
 using Eluvion.Weave;
 using Tonga;
 
@@ -40,9 +41,9 @@ public static partial class SeedSmarts
 {
     public static ISeed<TSeed> AsSeed<TSeed>(this TSeed seed) => new AsSeed<TSeed>(seed);
     
-    public static ISeed<TMapped> Mapped<TSeed, TMapped>(this ISeed<TSeed> seed, WeaveMorph<TSeed, TMapped> mapping) =>
+    public static ISeed<TMapped> Mapped<TSeed, TMapped>(this ISeed<TSeed> seed, CraftMorph<TSeed, TMapped> mapping) =>
         seed.Weave(mapping);
     
     public static ISeed<TMapped> Mapped<TSeed, TMapped>(this ISeed<TSeed> seed, Func<TSeed, TMapped> mapping) =>
-        seed.Weave(new AsWeave<TSeed, TMapped>(mapping));
+        seed.Weave(new AsCraft<TSeed, TMapped>(mapping));
 }

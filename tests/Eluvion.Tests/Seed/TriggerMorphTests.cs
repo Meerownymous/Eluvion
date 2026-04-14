@@ -1,8 +1,7 @@
-using Xunit;
-using Eluvion.Seed;
 using Eluvion.Trigger;
+using Xunit;
 
-namespace Slydrix.Tests.Seed;
+namespace Eluvion.Tests.Seed;
 
 public sealed class TriggerMorphTests
 {

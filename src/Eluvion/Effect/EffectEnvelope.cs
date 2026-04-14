@@ -1,3 +1,4 @@
+using Eluvion.Forge;
 using Eluvion.Weave;
 
 namespace Eluvion.Effect;
@@ -32,8 +33,8 @@ public abstract class EffectEnvelope<TIn>(IEffect<TIn> origin) : IEffect<TIn>
     public IEffect<TIn> Effect(IEffect<TIn> effect) => new EffectLink<TIn>(this, effect);
 
     public IWeave<TIn, TOut> Weave<TOut>(IWeave<TIn, TOut> weave) =>
-        new WeaveLink<TIn, TIn, TOut>(
-            new AsWeave<TIn, TIn>(async ipt =>
+        new CraftLink<TIn, TIn, TOut>(
+            new AsCraft<TIn, TIn>(async ipt =>
             {
                 await Act(ipt);
                 return ipt;

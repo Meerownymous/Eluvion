@@ -1,9 +1,9 @@
 using Eluvion.Effect;
 
-namespace Eluvion.Weave;
+namespace Eluvion.Craft;
 
 /// <summary>An effect that runs the given weave on its input, discarding the output.</summary>
-public sealed class WeaveAsEffect<TIn,TOut>(
+public sealed class CraftAsEffect<TIn,TOut>(
     IWeave<TIn, TOut> weave
 ) : EffectEnvelope<TIn>(async ipt => await weave.Act(ipt))
 { }

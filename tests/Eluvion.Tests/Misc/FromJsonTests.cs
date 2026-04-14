@@ -1,7 +1,7 @@
-using Xunit;
 using Eluvion.Misc;
+using Xunit;
 
-namespace Slydrix.Tests.Misc;
+namespace Eluvion.Tests.Misc;
 
 public sealed class FromJsonTests
 {

@@ -1,9 +1,9 @@
-using Xunit;
 using Eluvion.Effect;
+using Eluvion.Forge;
 using Eluvion.Trigger;
-using Eluvion.Weave;
+using Xunit;
 
-namespace Slydrix.Tests.Effect;
+namespace Eluvion.Tests.Effect;
 
 public sealed class EffectLinkTests
 {
@@ -76,6 +76,6 @@ public sealed class EffectLinkTests
         => Assert.Equal(42, await new EffectLink<int>(
                 new AsEffect<int>(_ => { }),
                 new AsEffect<int>(_ => { }))
-            .Weave(new AsWeave<int, int>(x => x))
+            .Weave(new AsCraft<int, int>(x => x))
             .Act(42));
 }

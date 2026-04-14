@@ -1,7 +1,7 @@
-using Xunit;
 using Eluvion.Seed;
+using Xunit;
 
-namespace Slydrix.Tests.Seed;
+namespace Eluvion.Tests.Seed;
 
 public sealed class SeedExtensionsTests
 {

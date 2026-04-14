@@ -1,10 +1,10 @@
-using Xunit;
-using Eluvion.Seed;
 using Eluvion.Effect;
+using Eluvion.Forge;
+using Eluvion.Seed;
 using Eluvion.Trigger;
-using Eluvion.Weave;
+using Xunit;
 
-namespace Slydrix.Tests.Seed;
+namespace Eluvion.Tests.Seed;
 
 public sealed class AsSeedTests
 {
@@ -31,7 +31,7 @@ public sealed class AsSeedTests
     [Fact]
     public async Task Weave_TransformsYieldedValue()
         => Assert.Equal("42", await new AsSeed<int>(42)
-            .Weave(new AsWeave<int, string>(x => x.ToString()))
+            .Weave(new AsCraft<int, string>(x => x.ToString()))
             .Yield());
 
     [Fact]

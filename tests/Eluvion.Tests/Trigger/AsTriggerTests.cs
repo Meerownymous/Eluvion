@@ -1,6 +1,7 @@
 using Xunit;
 using Eluvion.Trigger;
 using Eluvion.Effect;
+using Eluvion.Forge;
 using Eluvion.Weave;
 
 namespace Slydrix.Tests.Trigger;
@@ -47,7 +48,7 @@ public sealed class AsTriggerTests
     public async Task Effect_InputFlowsThroughUnchanged()
         => Assert.Equal(42, await new AsTrigger(() => { })
             .Effect(new AsEffect<int>(_ => { }))
-            .Weave(new AsWeave<int, int>(x => x))
+            .Weave(new AsCraft<int, int>(x => x))
             .Act(42));
 
     [Fact]
@@ -55,7 +56,7 @@ public sealed class AsTriggerTests
     {
         var called = false;
         await new AsTrigger(() => called = true)
-            .Weave<int, int>(new AsWeave<int, int>(x => x))
+            .Weave<int, int>(new AsCraft<int, int>(x => x))
             .Act(0);
         Assert.True(called);
     }
@@ -63,6 +64,6 @@ public sealed class AsTriggerTests
     [Fact]
     public async Task Weave_InputPassesThroughUnchanged()
         => Assert.Equal(42, await new AsTrigger(() => { })
-            .Weave<int, int>(new AsWeave<int, int>(x => x))
+            .Weave<int, int>(new AsCraft<int, int>(x => x))
             .Act(42));
 }

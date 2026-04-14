@@ -1,6 +1,7 @@
 using Xunit;
 using Eluvion.Trigger;
 using Eluvion.Effect;
+using Eluvion.Forge;
 using Eluvion.Weave;
 
 namespace Slydrix.Tests.Trigger;
@@ -57,6 +58,6 @@ public sealed class TriggerLinkTests
     [Fact]
     public async Task Weave_InputPassesThroughUnchanged()
         => Assert.Equal(42, await new TriggerLink(new AsTrigger(() => { }), new AsTrigger(() => { }))
-            .Weave<int, int>(new AsWeave<int, int>(x => x))
+            .Weave<int, int>(new AsCraft<int, int>(x => x))
             .Act(42));
 }
