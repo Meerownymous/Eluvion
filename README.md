@@ -9,7 +9,7 @@ Every flow is built from four primitives:
 | **Seed**    | Origin of a flow — produces the initial value                                           |
 | **Trigger** | Fires independently of the data flowing through                                         |
 | **Effect**  | Receives the current value, acts on it, passes it unchanged                             |
-| **Forge**   | Transforms the current value into a new one, will typically hold the main usecase logic |
+| **Craft**   | Transforms the current value into a new one, will typically hold the main usecase logic |
 
 Flows start acting when calling `.Yield()`, which will activate the whole pipeline and result in the final value.
 
@@ -30,8 +30,8 @@ Because each primitive is its own class, it can be tested in isolation, replaced
 ```csharp
 var post = await new SeedFromJson<CreatePostCommand>(requestBody)
     .Effect(new Validated<CreatePostCommand>(validator))
-    .Forge(new WithAuthor(userId, userRepo))
-    .Forge(new AsPost())
+    .Craft(new WithAuthor(userId, userRepo))
+    .Craft(new AsPost())
     .Effect(new InRepo<Post>(postRepo))
     .Effect(new InSearchIndex(searchIndex))
     .Trigger(new Published<PostCreated>(eventBus))
@@ -45,7 +45,7 @@ var post = await new SeedFromJson<CreatePostCommand>(requestBody)
 
 ```csharp
 var post = await postId.AsSeed()
-    .Forge(new FromRepo<Post>(postRepo))
+    .Craft(new FromRepo<Post>(postRepo))
     .Effect(new RaisedLikeCount(postRepo))
     .Effect(new Interaction(userId, analyticsRepo))
     .Trigger(new Published<PostLiked>(eventBus))
@@ -75,10 +75,10 @@ var deleted = await new SeedIf<Post>(
 
 ```csharp
 var feed = await userId.AsSeed()
-    .Forge(new FollowedUserIds(followRepo))
-    .Forge(new RecentPosts(postRepo, since: DateTimeOffset.UtcNow.AddDays(-2)))
-    .Forge(new ByRelevance(rankingService))
-    .Forge(new Page<Post>(page, pageSize))
+    .Craft(new FollowedUserIds(followRepo))
+    .Craft(new RecentPosts(postRepo, since: DateTimeOffset.UtcNow.AddDays(-2)))
+    .Craft(new ByRelevance(rankingService))
+    .Craft(new Page<Post>(page, pageSize))
     .Effect(new FeedView(userId, analyticsRepo))
     .Yield();
 ```
@@ -90,9 +90,9 @@ var feed = await userId.AsSeed()
 ```csharp
 var comment = await new SeedFromJson<CommentCommand>(requestBody)
     .Effect(new Validated<CommentCommand>(validator))
-    .Forge(new HtmlSafe())
-    .Forge(new WithMentions(userRepo))
-    .Forge(new AsComment(userId))
+    .Craft(new HtmlSafe())
+    .Craft(new WithMentions(userRepo))
+    .Craft(new AsComment(userId))
     .Effect(new InRepo<Comment>(commentRepo))
     .Effect(new CommentCount(postRepo))
     .Trigger(new PostAuthorNotification(postRepo, pushClient))
