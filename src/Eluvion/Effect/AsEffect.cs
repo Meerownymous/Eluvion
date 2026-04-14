@@ -15,10 +15,7 @@ public sealed class AsEffect<TIn>(Func<TIn,Task> act) : IEffect<TIn>
     { }
 
     /// <summary>An effect built from a parameterless async action, ignoring its input.</summary>
-    public AsEffect(Func<Task> act) : this(async _ =>
-    {
-        await act();
-    })
+    public AsEffect(Func<Task> act) : this(async _ => await act())
     { }
 
     /// <summary>An effect that calls the given function with its input and discards the result.</summary>
