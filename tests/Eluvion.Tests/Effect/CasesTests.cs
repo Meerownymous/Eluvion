@@ -8,25 +8,37 @@ namespace Eluvion.Tests.Effect;
 public sealed class CasesTests
 {
     [Fact]
-    public async Task FiresSuccessEffectWhenFirstCase()
+    public async Task TwoCases_FiresFirstHandler()
     {
         var fired = "";
         await new Cases<string, int>(
-            s => new AsEffect<string>(v => fired = $"success:{v}"),
-            n => new AsEffect<int>(v => fired = $"error:{v}")
+            t0 => new AsEffect<string>(v => fired = $"t0:{v}"),
+            t1 => new AsEffect<int>(v => fired = $"t1:{v}")
         ).Fire(OneOf<string, int>.FromT0("hello"));
-        Assert.Equal("success:hello", fired);
+        Assert.Equal("t0:hello", fired);
     }
 
     [Fact]
-    public async Task FiresErrorEffectWhenSecondCase()
+    public async Task TwoCases_FiresSecondHandler()
     {
         var fired = "";
         await new Cases<string, int>(
-            s => new AsEffect<string>(v => fired = $"success:{v}"),
-            n => new AsEffect<int>(v => fired = $"error:{v}")
+            t0 => new AsEffect<string>(v => fired = $"t0:{v}"),
+            t1 => new AsEffect<int>(v => fired = $"t1:{v}")
         ).Fire(OneOf<string, int>.FromT1(42));
-        Assert.Equal("error:42", fired);
+        Assert.Equal("t1:42", fired);
+    }
+
+    [Fact]
+    public async Task ThreeCases_FiresMatchingHandler()
+    {
+        var fired = "";
+        await new Cases<string, int, bool>(
+            t0 => new AsEffect<string>(v => fired = $"t0:{v}"),
+            t1 => new AsEffect<int>(v => fired = $"t1:{v}"),
+            t2 => new AsEffect<bool>(v => fired = $"t2:{v}")
+        ).Fire(OneOf<string, int, bool>.FromT2(true));
+        Assert.Equal("t2:True", fired);
     }
 
     [Fact]
@@ -35,11 +47,11 @@ public sealed class CasesTests
         var fired = "";
         await new AsSeed<OneOf<string, int>>(OneOf<string, int>.FromT0("hello"))
             .Effect(new Cases<string, int>(
-                s => new AsEffect<string>(v => fired = $"success:{v}"),
-                n => new AsEffect<int>(v => fired = $"error:{v}")
+                t0 => new AsEffect<string>(v => fired = $"t0:{v}"),
+                t1 => new AsEffect<int>(v => fired = $"t1:{v}")
             ))
             .Yield();
-        Assert.Equal("success:hello", fired);
+        Assert.Equal("t0:hello", fired);
     }
 
     [Fact]
@@ -48,9 +60,9 @@ public sealed class CasesTests
         var fired = "";
         OneOf<string, int> oneOf = "implicit";
         await new Cases<string, int>(
-            s => new AsEffect<string>(v => fired = $"success:{v}"),
-            n => new AsEffect<int>(v => fired = $"error:{v}")
+            t0 => new AsEffect<string>(v => fired = $"t0:{v}"),
+            t1 => new AsEffect<int>(v => fired = $"t1:{v}")
         ).Fire(oneOf);
-        Assert.Equal("success:implicit", fired);
+        Assert.Equal("t0:implicit", fired);
     }
 }
