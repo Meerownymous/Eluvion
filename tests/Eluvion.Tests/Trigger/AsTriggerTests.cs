@@ -1,10 +1,9 @@
-using Xunit;
-using Eluvion.Trigger;
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
-using Eluvion.Weave;
+using Eluvion.Trigger;
+using Xunit;
 
-namespace Slydrix.Tests.Trigger;
+namespace Eluvion.Tests.Trigger;
 
 public sealed class AsTriggerTests
 {
@@ -40,7 +39,7 @@ public sealed class AsTriggerTests
         var called = false;
         await new AsTrigger(() => called = true)
             .Effect(new AsEffect<int>(_ => { }))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 
@@ -48,22 +47,22 @@ public sealed class AsTriggerTests
     public async Task Effect_InputFlowsThroughUnchanged()
         => Assert.Equal(42, await new AsTrigger(() => { })
             .Effect(new AsEffect<int>(_ => { }))
-            .Weave(new AsCraft<int, int>(x => x))
-            .Act(42));
+            .Craft(new AsCraft<int, int>(x => x))
+            .Yield(42));
 
     [Fact]
-    public async Task Weave_TriggerExecutesDuringAct()
+    public async Task TriggerExecutesDuringAct()
     {
         var called = false;
         await new AsTrigger(() => called = true)
-            .Weave<int, int>(new AsCraft<int, int>(x => x))
-            .Act(0);
+            .Craft<int, int>(new AsCraft<int, int>(x => x))
+            .Yield(0);
         Assert.True(called);
     }
 
     [Fact]
-    public async Task Weave_InputPassesThroughUnchanged()
+    public async Task InputPassesThroughUnchanged()
         => Assert.Equal(42, await new AsTrigger(() => { })
-            .Weave<int, int>(new AsCraft<int, int>(x => x))
-            .Act(42));
+            .Craft<int, int>(new AsCraft<int, int>(x => x))
+            .Yield(42));
 }

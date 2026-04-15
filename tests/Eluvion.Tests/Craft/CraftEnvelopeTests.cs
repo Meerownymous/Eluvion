@@ -1,7 +1,6 @@
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Trigger;
-using Eluvion.Weave;
 using Xunit;
 
 namespace Eluvion.Tests.Craft;
@@ -9,8 +8,8 @@ namespace Eluvion.Tests.Craft;
 public sealed class CraftEnvelopeTests
 {
     [Fact]
-    public async Task Act_DelegatesToWrappedWeave()
-        => Assert.Equal(42, await new CraftMorph<int, int>(new AsCraft<int, int>(x => x * 2)).Act(21));
+    public async Task Act_DelegatesToWrappedCraft()
+        => Assert.Equal(42, await new CraftMorph<int, int>(new AsCraft<int, int>(x => x * 2)).Yield(21));
 
     [Fact]
     public async Task Trigger_DelegatesToOrigin()
@@ -18,7 +17,7 @@ public sealed class CraftEnvelopeTests
         var called = false;
         await new CraftMorph<int, int>(new AsCraft<int, int>(x => x))
             .Trigger(new AsTrigger(() => called = true))
-            .Act(0);
+            .Yield(0);
         Assert.True(called);
     }
 
@@ -28,13 +27,13 @@ public sealed class CraftEnvelopeTests
         var received = 0;
         await new CraftMorph<int, int>(new AsCraft<int, int>(x => x * 2))
             .Effect(new AsEffect<int>(ipt => received = ipt))
-            .Act(21);
+            .Yield(21);
         Assert.Equal(42, received);
     }
 
     [Fact]
-    public async Task Weave_DelegatesToOrigin()
+    public async Task DelegatesToOrigin()
         => Assert.Equal("42", await new CraftMorph<int, int>(new AsCraft<int, int>(x => x * 2))
-            .Weave(new AsCraft<int, string>(x => x.ToString()))
-            .Act(21));
+            .Craft(new AsCraft<int, string>(x => x.ToString()))
+            .Yield(21));
 }

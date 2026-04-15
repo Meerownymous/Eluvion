@@ -1,6 +1,5 @@
 using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Trigger;
 using Xunit;
 
@@ -9,18 +8,18 @@ namespace Eluvion.Tests.Effect;
 public sealed class EffectEnvelopeTests
 {
     [Fact]
-    public async Task Act_DelegatesToWrappedWeave()
+    public async Task Act_DelegatesToWrappedCraft()
     {
         var called = false;
-        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { called = true; return x; })).Act(0);
+        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { called = true; return x; })).Fire(0);
         Assert.True(called);
     }
 
     [Fact]
-    public async Task Act_PassesCorrectInputToWeave()
+    public async Task Act_PassesCorrectInputToCraft()
     {
         var received = 0;
-        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { received = x; return x; })).Act(42);
+        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { received = x; return x; })).Fire(42);
         Assert.Equal(42, received);
     }
 
@@ -30,7 +29,7 @@ public sealed class EffectEnvelopeTests
         var called = false;
         await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => x))
             .Trigger(new AsTrigger(() => called = true))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 
@@ -40,13 +39,13 @@ public sealed class EffectEnvelopeTests
         var received = 0;
         await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => x))
             .Effect(new AsEffect<int>(ipt => received = ipt))
-            .Act(42);
+            .Fire(42);
         Assert.Equal(42, received);
     }
 
     [Fact]
-    public async Task Weave_InputFlowsThroughToWeave()
+    public async Task InputFlowsThroughToCraft()
         => Assert.Equal(42, await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => x))
-            .Weave(new AsCraft<int, int>(x => x))
-            .Act(42));
+            .Craft(new AsCraft<int, int>(x => x))
+            .Yield(42));
 }

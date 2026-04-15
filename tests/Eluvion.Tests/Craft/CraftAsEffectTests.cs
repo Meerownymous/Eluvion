@@ -1,6 +1,5 @@
 using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Trigger;
 using Xunit;
 
@@ -9,18 +8,18 @@ namespace Eluvion.Tests.Craft;
 public sealed class CraftAsEffectTests
 {
     [Fact]
-    public async Task Act_ExecutesWrappedWeave()
+    public async Task Act_ExecutesWrappedCraft()
     {
         var called = false;
-        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { called = true; return x; })).Act(0);
+        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { called = true; return x; })).Fire(0);
         Assert.True(called);
     }
 
     [Fact]
-    public async Task Act_PassesCorrectInputToWeave()
+    public async Task Act_PassesCorrectInputToCraft()
     {
         var received = 0;
-        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { received = x; return x; })).Act(42);
+        await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => { received = x; return x; })).Fire(42);
         Assert.Equal(42, received);
     }
 
@@ -30,7 +29,7 @@ public sealed class CraftAsEffectTests
         var received = 0;
         await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => x * 2))
             .Effect(new AsEffect<int>(ipt => received = ipt))
-            .Act(42);
+            .Fire(42);
         Assert.Equal(42, received);
     }
 
@@ -40,7 +39,7 @@ public sealed class CraftAsEffectTests
         var called = false;
         await new CraftAsEffect<int, int>(new AsCraft<int, int>(x => x))
             .Trigger(new AsTrigger(() => called = true))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 }

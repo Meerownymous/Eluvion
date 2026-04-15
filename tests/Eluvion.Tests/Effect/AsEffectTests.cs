@@ -1,5 +1,5 @@
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Trigger;
 using Xunit;
 
@@ -11,7 +11,7 @@ public sealed class AsEffectTests
     public async Task Act_WithAsyncFunc_ReceivesCorrectInput()
     {
         var received = 0;
-        await new AsEffect<int>(ipt => received = ipt).Act(42);
+        await new AsEffect<int>(ipt => received = ipt).Fire(42);
         Assert.Equal(42, received);
     }
 
@@ -19,7 +19,7 @@ public sealed class AsEffectTests
     public async Task Act_WithSyncAction_ReceivesCorrectInput()
     {
         var received = 0;
-        await new AsEffect<int>(ipt => received = ipt).Act(42);
+        await new AsEffect<int>(ipt => received = ipt).Fire(42);
         Assert.Equal(42, received);
     }
 
@@ -27,7 +27,7 @@ public sealed class AsEffectTests
     public async Task Act_WithParamlessFuncTask_Executes()
     {
         var called = false;
-        await new AsEffect<int>(() => { called = true; return Task.CompletedTask; }).Act(0);
+        await new AsEffect<int>(() => { called = true; return Task.CompletedTask; }).Fire(0);
         Assert.True(called);
     }
 
@@ -35,7 +35,7 @@ public sealed class AsEffectTests
     public async Task Act_WithTrigger_ExecutesTrigger()
     {
         var called = false;
-        await new AsEffect<int>(new AsTrigger(() => called = true)).Act(0);
+        await new AsEffect<int>(new AsTrigger(() => called = true)).Fire(0);
         Assert.True(called);
     }
 
@@ -45,7 +45,7 @@ public sealed class AsEffectTests
         var sum = 0;
         await new AsEffect<int>(ipt => sum += ipt)
             .Effect(new AsEffect<int>(ipt => sum += ipt))
-            .Act(21);
+            .Fire(21);
         Assert.Equal(42, sum);
     }
 
@@ -55,13 +55,13 @@ public sealed class AsEffectTests
         var called = false;
         await new AsEffect<int>(_ => { })
             .Trigger(new AsTrigger(() => called = true))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 
     [Fact]
-    public async Task Weave_InputFlowsThroughWeave()
+    public async Task InputFlowsThroughCraft()
         => Assert.Equal(42, await new AsEffect<int>(_ => { })
-            .Weave(new AsCraft<int, int>(x => x))
-            .Act(42));
+            .Craft(new AsCraft<int, int>(x => x))
+            .Yield(42));
 }

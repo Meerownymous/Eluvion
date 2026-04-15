@@ -11,7 +11,7 @@ public class SeedLink<TSeed>(ISeed<TSeed> first, Func<TSeed, Task> second) : ISe
 
     /// <summary>A seed that applies the given effect to its value after yielding.</summary>
     public SeedLink(ISeed<TSeed> first, IEffect<TSeed> effect) : this(
-        first, async seed => await effect.Act(seed)
+        first, async seed => await effect.Fire(seed)
     )
     { }
     
@@ -35,10 +35,10 @@ public class SeedLink<TSeed>(ISeed<TSeed> first, Func<TSeed, Task> second) : ISe
         new AsSeed<TSeed>(async () =>
         {
             var seed = await Yield();
-            await effect.Act(seed);
+            await effect.Fire(seed);
             return seed;
         });
 
-    public ISeed<TNewSeed> Weave<TNewSeed>(IWeave<TSeed, TNewSeed> weave) =>
-        new AsSeed<TNewSeed>(async () => await weave.Act(await Yield()));
+    public ISeed<TNewSeed> Craft<TNewSeed>(ICraft<TSeed, TNewSeed> craft) =>
+        new AsSeed<TNewSeed>(async () => await craft.Yield(await Yield()));
 }

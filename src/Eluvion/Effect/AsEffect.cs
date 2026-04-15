@@ -1,5 +1,4 @@
-using Eluvion.Forge;
-using Eluvion.Weave;
+using Eluvion.Craft;
 
 namespace Eluvion.Effect;
 
@@ -30,7 +29,7 @@ public sealed class AsEffect<TIn>(Func<TIn,Task> act) : IEffect<TIn>
     public AsEffect(ITrigger trigger) : this(async _ => await trigger.Act())
     { }
 
-    public async Task Act(TIn ipt) => await act(ipt);
+    public async Task Fire(TIn ipt) => await act(ipt);
 
     public IEffect<TIn> Trigger(ITrigger trigger) =>
         new EffectLink<TIn>(this, new AsEffect<TIn>(trigger));
@@ -38,13 +37,13 @@ public sealed class AsEffect<TIn>(Func<TIn,Task> act) : IEffect<TIn>
     public IEffect<TIn> Effect(IEffect<TIn> effect) =>
         new EffectLink<TIn>(
             this,
-            new AsEffect<TIn>(async ipt => await effect.Act(ipt))
+            new AsEffect<TIn>(async ipt => await effect.Fire(ipt))
         );
 
-    public IWeave<TIn, TOut> Weave<TOut>(IWeave<TIn, TOut> weave) =>
+    public ICraft<TIn, TOut> Craft<TOut>(ICraft<TIn, TOut> craft) =>
         new CraftLink<TIn, TIn, TOut>(
             new AsCraft<TIn, TIn>(ipt => Task.FromResult(ipt)),
-            new AsCraft<TIn, TOut>(ipt => weave.Act(ipt))
+            new AsCraft<TIn, TOut>(ipt => craft.Yield(ipt))
         );
 
 }

@@ -19,6 +19,6 @@ public abstract class SeedEnvelope<TSeed>(Func<ISeed<TSeed>> seed) : ISeed<TSeed
     public ISeed<TSeed> Effect(IEffect<TSeed> effect) =>
         new SeedLink<TSeed>(this, effect);
 
-    public ISeed<TOut> Weave<TOut>(IWeave<TSeed, TOut> weave) =>
-        new AsSeed<TOut>(async () => await weave.Act(await Yield()));
+    public ISeed<TOut> Craft<TOut>(ICraft<TSeed, TOut> craft) =>
+        new AsSeed<TOut>(async () => await craft.Yield(await Yield()));
 }

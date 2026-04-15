@@ -17,5 +17,5 @@ public abstract class TriggerEnvelope(ITrigger origin) : ITrigger
 
     public IEffect<TIn> Effect<TIn>(IEffect<TIn> effect) => origin.Effect(effect);
 
-    public IWeave<TIn, TOut> Weave<TIn, TOut>(IWeave<TIn, TOut> weave) => origin.Weave(weave);
+    public ICraft<TIn, TOut> Craft<TIn, TOut>(ICraft<TIn, TOut> craft) => origin.Craft(craft);
 }

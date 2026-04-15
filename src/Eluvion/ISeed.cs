@@ -11,6 +11,6 @@ public interface ISeed<TSpawned>
     /// <summary>This seed with the given effect applied to its value after yielding.</summary>
     ISeed<TSpawned> Effect(IEffect<TSpawned> effect);
 
-    /// <summary>This seed with its yielded value transformed through the given weave.</summary>
-    ISeed<TNewSpan> Weave<TNewSpan>(IWeave<TSpawned, TNewSpan> weave);
+    /// <summary>This seed with its yielded value transformed through the given craft.</summary>
+    ISeed<TNewSpawn> Craft<TNewSpawn>(ICraft<TSpawned, TNewSpawn> craft);
 }

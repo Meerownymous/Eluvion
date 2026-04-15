@@ -1,5 +1,3 @@
-using Eluvion.Trigger;
-
 namespace Eluvion.Effect;
 
 /// <summary>An effect delegating to the given effect, implicitly constructible.</summary>

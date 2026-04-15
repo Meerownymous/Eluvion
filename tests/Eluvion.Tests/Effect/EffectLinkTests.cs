@@ -1,5 +1,5 @@
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Trigger;
 using Xunit;
 
@@ -14,7 +14,7 @@ public sealed class EffectLinkTests
         await new EffectLink<int>(
             new AsEffect<int>(_ => called = true),
             new AsEffect<int>(_ => { })
-        ).Act(0);
+        ).Fire(0);
         Assert.True(called);
     }
 
@@ -25,7 +25,7 @@ public sealed class EffectLinkTests
         await new EffectLink<int>(
             new AsEffect<int>(_ => { }),
             new AsEffect<int>(_ => called = true)
-        ).Act(0);
+        ).Fire(0);
         Assert.True(called);
     }
 
@@ -36,7 +36,7 @@ public sealed class EffectLinkTests
         await new EffectLink<int>(
             new AsEffect<int>(ipt => sum += ipt),
             new AsEffect<int>(ipt => sum += ipt)
-        ).Act(21);
+        ).Fire(21);
         Assert.Equal(42, sum);
     }
 
@@ -47,7 +47,7 @@ public sealed class EffectLinkTests
         await new EffectLink<int>(
             new AsEffect<int>(_ => order.Add(1)),
             new AsEffect<int>(_ => order.Add(2))
-        ).Act(0);
+        ).Fire(0);
         Assert.Equal(1, order[0]);
     }
 
@@ -57,7 +57,7 @@ public sealed class EffectLinkTests
         var called = false;
         await new EffectLink<int>(new AsEffect<int>(_ => { }), new AsEffect<int>(_ => { }))
             .Trigger(new AsTrigger(() => called = true))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 
@@ -67,15 +67,15 @@ public sealed class EffectLinkTests
         var called = false;
         await new EffectLink<int>(new AsEffect<int>(_ => { }), new AsEffect<int>(_ => { }))
             .Effect(new AsEffect<int>(_ => called = true))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 
     [Fact]
-    public async Task Weave_InputPassesThroughToWeave()
+    public async Task InputPassesThroughToCraft()
         => Assert.Equal(42, await new EffectLink<int>(
                 new AsEffect<int>(_ => { }),
                 new AsEffect<int>(_ => { }))
-            .Weave(new AsCraft<int, int>(x => x))
-            .Act(42));
+            .Craft(new AsCraft<int, int>(x => x))
+            .Yield(42));
 }

@@ -1,11 +1,9 @@
-using Xunit;
-using Eluvion.Seed;
-using Eluvion.Trigger;
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
-using Eluvion.Weave;
+using Eluvion.Trigger;
+using Xunit;
 
-namespace Slydrix.Tests.Trigger;
+namespace Eluvion.Tests.Trigger;
 
 public sealed class TriggerEnvelopeTests
 {
@@ -33,13 +31,13 @@ public sealed class TriggerEnvelopeTests
         var called = false;
         await new TriggerMorph(new AsTrigger(() => called = true))
             .Effect(new AsEffect<int>(_ => { }))
-            .Act(0);
+            .Fire(0);
         Assert.True(called);
     }
 
     [Fact]
-    public async Task Weave_InputPassesThroughUnchanged()
+    public async Task InputPassesThroughUnchanged()
         => Assert.Equal(42, await new TriggerMorph(new AsTrigger(() => { }))
-            .Weave<int, int>(new AsCraft<int, int>(x => x))
-            .Act(42));
+            .Craft<int, int>(new AsCraft<int, int>(x => x))
+            .Yield(42));
 }

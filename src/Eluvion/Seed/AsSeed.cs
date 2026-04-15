@@ -1,5 +1,4 @@
-using Eluvion.Forge;
-using Eluvion.Weave;
+using Eluvion.Craft;
 using Tonga;
 
 namespace Eluvion.Seed;
@@ -31,9 +30,9 @@ public sealed class AsSeed<TSeed>(Func<Task<TSeed>> spawnAsync) : ISeed<TSeed>
     public ISeed<TSeed> Effect(IEffect<TSeed> effect) =>
         new SeedLink<TSeed>(this, effect);
 
-    public ISeed<TNewSpan> Weave<TNewSpan>(IWeave<TSeed, TNewSpan> weave) =>
+    public ISeed<TNewSpan> Craft<TNewSpan>(ICraft<TSeed, TNewSpan> craft) =>
         new AsSeed<TNewSpan>(async () =>
-            await weave.Act(await Yield())
+            await craft.Yield(await Yield())
         );
 }
 
@@ -42,8 +41,8 @@ public static partial class SeedSmarts
     public static ISeed<TSeed> AsSeed<TSeed>(this TSeed seed) => new AsSeed<TSeed>(seed);
     
     public static ISeed<TMapped> Mapped<TSeed, TMapped>(this ISeed<TSeed> seed, CraftMorph<TSeed, TMapped> mapping) =>
-        seed.Weave(mapping);
+        seed.Craft(mapping);
     
     public static ISeed<TMapped> Mapped<TSeed, TMapped>(this ISeed<TSeed> seed, Func<TSeed, TMapped> mapping) =>
-        seed.Weave(new AsCraft<TSeed, TMapped>(mapping));
+        seed.Craft(new AsCraft<TSeed, TMapped>(mapping));
 }

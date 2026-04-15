@@ -1,5 +1,5 @@
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Seed;
 using Eluvion.Trigger;
 using Xunit;
@@ -42,8 +42,8 @@ public sealed class SeedLinkTests
     }
 
     [Fact]
-    public async Task Weave_TransformsYieldedValue()
+    public async Task TransformsYieldedValue()
         => Assert.Equal("42", await new SeedLink<int>(new AsSeed<int>(42), new AsEffect<int>(_ => { }))
-            .Weave(new AsCraft<int, string>(x => x.ToString()))
+            .Craft(new AsCraft<int, string>(x => x.ToString()))
             .Yield());
 }

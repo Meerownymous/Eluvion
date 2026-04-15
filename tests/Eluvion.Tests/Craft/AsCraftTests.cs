@@ -1,5 +1,5 @@
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Trigger;
 using Xunit;
 
@@ -9,17 +9,17 @@ public sealed class AsCraftTests
 {
     [Fact]
     public async Task Act_WithSyncFunc_TransformsInput()
-        => Assert.Equal(42, await new AsCraft<int, int>(x => x * 2).Act(21));
+        => Assert.Equal(42, await new AsCraft<int, int>(x => x * 2).Yield(21));
 
     [Fact]
     public async Task Act_WithAsyncFunc_TransformsInput()
-        => Assert.Equal(42, await new AsCraft<int, int>(async x => await Task.FromResult(x)).Act(42));
+        => Assert.Equal(42, await new AsCraft<int, int>(async x => await Task.FromResult(x)).Yield(42));
 
     [Fact]
-    public async Task Weave_ComposesTransformations()
+    public async Task ComposesTransformations()
         => Assert.Equal("42", await new AsCraft<int, int>(x => x * 2)
-            .Weave(new AsCraft<int, string>(x => x.ToString()))
-            .Act(21));
+            .Craft(new AsCraft<int, string>(x => x.ToString()))
+            .Yield(21));
 
     [Fact]
     public async Task Effect_ExecutedWithTransformedValue()
@@ -27,7 +27,7 @@ public sealed class AsCraftTests
         var received = 0;
         await new AsCraft<int, int>(x => x * 2)
             .Effect(new AsEffect<int>(ipt => received = ipt))
-            .Act(21);
+            .Yield(21);
         Assert.Equal(42, received);
     }
 
@@ -37,7 +37,7 @@ public sealed class AsCraftTests
         var called = false;
         await new AsCraft<int, int>(x => x)
             .Trigger(new AsTrigger(() => called = true))
-            .Act(0);
+            .Yield(0);
         Assert.True(called);
     }
 
@@ -45,5 +45,5 @@ public sealed class AsCraftTests
     public async Task Trigger_ResultPreservedAfterTrigger()
         => Assert.Equal(42, await new AsCraft<int, int>(x => x)
             .Trigger(new AsTrigger(() => { }))
-            .Act(42));
+            .Yield(42));
 }

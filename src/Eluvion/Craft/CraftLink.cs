@@ -1,15 +1,13 @@
-using Eluvion.Forge;
+namespace Eluvion.Craft;
 
-namespace Eluvion.Weave;
-
-/// <summary>Two weaves whose transformations are composed in sequence.</summary>
+/// <summary>Two crafts whose transformations are composed in sequence.</summary>
 public sealed class CraftLink<TIn,TInAndOut,TOut>(
-    IWeave<TIn,TInAndOut> first,
-    IWeave<TInAndOut,TOut> second
-) : IWeave<TIn, TOut>
+    ICraft<TIn,TInAndOut> first,
+    ICraft<TInAndOut,TOut> second
+) : ICraft<TIn, TOut>
 {
-    public async Task<TOut> Act(TIn ipt) => await second.Act(await first.Act(ipt));
-    public IWeave<TIn, TOut> Trigger(ITrigger trigger) =>
+    public async Task<TOut> Yield(TIn ipt) => await second.Yield(await first.Yield(ipt));
+    public ICraft<TIn, TOut> Trigger(ITrigger trigger) =>
         new CraftLink<TIn, TOut, TOut>(
             this,
             new AsCraft<TOut, TOut>(async resultFromFirst =>
@@ -19,16 +17,16 @@ public sealed class CraftLink<TIn,TInAndOut,TOut>(
             })
         );
 
-    public IWeave<TIn, TOut> Effect(IEffect<TOut> effect) =>
+    public ICraft<TIn, TOut> Effect(IEffect<TOut> effect) =>
         new CraftLink<TIn, TOut, TOut>(
             this,
             new AsCraft<TOut, TOut>(async resultFromFirst =>
             {
-                await effect.Act(resultFromFirst);
+                await effect.Fire(resultFromFirst);
                 return resultFromFirst;
             })
         );
 
-    public IWeave<TIn, TOutNext> Weave<TOutNext>(IWeave<TOut, TOutNext> next) =>
+    public ICraft<TIn, TOutNext> Craft<TOutNext>(ICraft<TOut, TOutNext> next) =>
         new CraftLink<TIn, TOut, TOutNext>(this, next);
 }

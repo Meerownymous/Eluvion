@@ -1,5 +1,5 @@
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
 using Eluvion.Seed;
 using Eluvion.Trigger;
 using Xunit;
@@ -29,9 +29,9 @@ public sealed class AsSeedTests
         => Assert.Equal(42, await 42.AsSeed().Yield());
 
     [Fact]
-    public async Task Weave_TransformsYieldedValue()
+    public async Task TransformsYieldedValue()
         => Assert.Equal("42", await new AsSeed<int>(42)
-            .Weave(new AsCraft<int, string>(x => x.ToString()))
+            .Craft(new AsCraft<int, string>(x => x.ToString()))
             .Yield());
 
     [Fact]

@@ -1,26 +1,25 @@
-using Xunit;
-using Eluvion.Weave;
-using Eluvion.Trigger;
+using Eluvion.Craft;
 using Eluvion.Effect;
-using Eluvion.Forge;
+using Eluvion.Trigger;
+using Xunit;
 
-namespace Slydrix.Tests.Weave;
+namespace Eluvion.Tests.Craft;
 
 public sealed class CraftLinkTests
 {
     [Fact]
-    public async Task Act_ComposesWeaves()
+    public async Task Act_ComposesCraft()
         => Assert.Equal("42", await new CraftLink<int, int, string>(
             new AsCraft<int, int>(x => x * 2),
             new AsCraft<int, string>(x => x.ToString())
-        ).Act(21));
+        ).Yield(21));
 
     [Fact]
-    public async Task Act_FirstWeaveOutputFeedsSecond()
+    public async Task Act_FirstCraftOutputFeedsSecond()
         => Assert.Equal(84, await new CraftLink<int, int, int>(
             new AsCraft<int, int>(x => x * 2),
             new AsCraft<int, int>(x => x * 2)
-        ).Act(21));
+        ).Yield(21));
 
     [Fact]
     public async Task Trigger_ExecutesAfterComposition()
@@ -29,7 +28,7 @@ public sealed class CraftLinkTests
         await new CraftLink<int, int, int>(
             new AsCraft<int, int>(x => x),
             new AsCraft<int, int>(x => x)
-        ).Trigger(new AsTrigger(() => called = true)).Act(0);
+        ).Trigger(new AsTrigger(() => called = true)).Yield(0);
         Assert.True(called);
     }
 
@@ -40,14 +39,14 @@ public sealed class CraftLinkTests
         await new CraftLink<int, int, int>(
             new AsCraft<int, int>(x => x * 2),
             new AsCraft<int, int>(x => x)
-        ).Effect(new AsEffect<int>(ipt => received = ipt)).Act(21);
+        ).Effect(new AsEffect<int>(ipt => received = ipt)).Yield(21);
         Assert.Equal(42, received);
     }
 
     [Fact]
-    public async Task Weave_ChainsAnotherWeave()
+    public async Task ChainsAnotherCraft()
         => Assert.Equal(44, await new CraftLink<int, int, int>(
             new AsCraft<int, int>(x => x * 2),
             new AsCraft<int, int>(x => x)
-        ).Weave(new AsCraft<int, int>(x => x + 2)).Act(21));
+        ).Craft(new AsCraft<int, int>(x => x + 2)).Yield(21));
 }
