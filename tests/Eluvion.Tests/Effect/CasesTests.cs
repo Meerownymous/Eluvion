@@ -1,19 +1,20 @@
 using Eluvion.Effect;
 using Eluvion.Seed;
+using OneOf;
 using Xunit;
 
 namespace Eluvion.Tests.Effect;
 
-public sealed class ResolveTests
+public sealed class CasesTests
 {
     [Fact]
     public async Task FiresSuccessEffectWhenFirstCase()
     {
         var fired = "";
-        await new Resolve<string, int>(
+        await new Cases<string, int>(
             s => new AsEffect<string>(v => fired = $"success:{v}"),
             n => new AsEffect<int>(v => fired = $"error:{v}")
-        ).Fire(new OneOf<string, int>("hello"));
+        ).Fire(OneOf<string, int>.FromT0("hello"));
         Assert.Equal("success:hello", fired);
     }
 
@@ -21,10 +22,10 @@ public sealed class ResolveTests
     public async Task FiresErrorEffectWhenSecondCase()
     {
         var fired = "";
-        await new Resolve<string, int>(
+        await new Cases<string, int>(
             s => new AsEffect<string>(v => fired = $"success:{v}"),
             n => new AsEffect<int>(v => fired = $"error:{v}")
-        ).Fire(new OneOf<string, int>(42));
+        ).Fire(OneOf<string, int>.FromT1(42));
         Assert.Equal("error:42", fired);
     }
 
@@ -32,8 +33,8 @@ public sealed class ResolveTests
     public async Task WorksInSeedPipeline()
     {
         var fired = "";
-        await new AsSeed<OneOf<string, int>>("hello")
-            .Effect(new Resolve<string, int>(
+        await new AsSeed<OneOf<string, int>>(OneOf<string, int>.FromT0("hello"))
+            .Effect(new Cases<string, int>(
                 s => new AsEffect<string>(v => fired = $"success:{v}"),
                 n => new AsEffect<int>(v => fired = $"error:{v}")
             ))
@@ -46,7 +47,7 @@ public sealed class ResolveTests
     {
         var fired = "";
         OneOf<string, int> oneOf = "implicit";
-        await new Resolve<string, int>(
+        await new Cases<string, int>(
             s => new AsEffect<string>(v => fired = $"success:{v}"),
             n => new AsEffect<int>(v => fired = $"error:{v}")
         ).Fire(oneOf);
